@@ -40,10 +40,21 @@ const Exercises = () => {
 
   if (current >= mockExercises.length) {
     return (
-      <Box textAlign="center" sx={{ px: { xs: 2, sm: 0 } }}>
+      <Box 
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        sx={{ 
+          px: { xs: 2, sm: 0 },
+          backgroundColor: '#f5f5f5'
+        }}
+      >
         <Typography variant="h4" sx={{
           fontSize: { xs: '1.5rem', sm: '2.125rem' },
-          mb: 2
+          mb: 2,
+          textAlign: 'center'
         }}>
           Great job! You finished all exercises.
         </Typography>
@@ -65,12 +76,24 @@ const Exercises = () => {
   const exercise = mockExercises[current];
 
   return (
-    <Paper sx={{ 
-      p: { xs: 2, sm: 4 }, 
-      maxWidth: { xs: '100%', sm: 480 }, 
-      mx: 'auto',
-      mt: { xs: 1, sm: 2 }
-    }}>
+    <Box 
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+      sx={{ 
+        px: { xs: 2, sm: 3 },
+        py: { xs: 3, sm: 4 },
+        backgroundColor: '#f5f5f5'
+      }}
+    >
+      <Paper sx={{ 
+        p: { xs: 3, sm: 4 }, 
+        maxWidth: { xs: '100%', sm: 600 }, 
+        width: '100%',
+        borderRadius: 3,
+        boxShadow: 3
+      }}>
       <Typography variant="h5" gutterBottom sx={{
         fontSize: { xs: '1.3rem', sm: '1.5rem' }
       }}>
@@ -133,6 +156,7 @@ const Exercises = () => {
         </Button>
       </Box>
     </Paper>
+    </Box>
   );
 };
 

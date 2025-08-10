@@ -9,72 +9,19 @@ import {
   IconButton
 } from '@mui/material';
 import { PlayArrow, CheckCircle, Lock } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import type { Lesson } from '../services/apiService';
+import { mockDashboardData } from '../services/apiService';
 
-interface Lesson {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  totalExercises: number;
-  completedExercises: number;
-  isUnlocked: boolean;
-  category: string;
+interface LessonListProps {
+  lessons?: Lesson[];
 }
 
-const mockLessons: Lesson[] = [
-  {
-    id: '1',
-    title: 'Basic Addition',
-    description: 'Learn to add single-digit numbers',
-    difficulty: 'Beginner',
-    totalExercises: 10,
-    completedExercises: 7,
-    isUnlocked: true,
-    category: 'Arithmetic'
-  },
-  {
-    id: '2',
-    title: 'Basic Subtraction',
-    description: 'Master subtraction with small numbers',
-    difficulty: 'Beginner',
-    totalExercises: 10,
-    completedExercises: 10,
-    isUnlocked: true,
-    category: 'Arithmetic'
-  },
-  {
-    id: '3',
-    title: 'Multiplication Tables',
-    description: 'Memorize multiplication tables 1-12',
-    difficulty: 'Intermediate',
-    totalExercises: 15,
-    completedExercises: 3,
-    isUnlocked: true,
-    category: 'Arithmetic'
-  },
-  {
-    id: '4',
-    title: 'Division Basics',
-    description: 'Introduction to division concepts',
-    difficulty: 'Intermediate',
-    totalExercises: 12,
-    completedExercises: 0,
-    isUnlocked: false,
-    category: 'Arithmetic'
-  },
-  {
-    id: '5',
-    title: 'Fractions',
-    description: 'Understanding parts of a whole',
-    difficulty: 'Advanced',
-    totalExercises: 20,
-    completedExercises: 0,
-    isUnlocked: false,
-    category: 'Numbers'
-  }
-];
-
-const LessonList: React.FC = () => {
+const LessonList: React.FC<LessonListProps> = ({ lessons }) => {
+  const navigate = useNavigate();
+  
+  // Use provided lessons or fallback to mock data
+  const displayLessons = lessons || mockDashboardData.lessons;
   const getProgressPercentage = (completed: number, total: number): number => {
     return (completed / total) * 100;
   };
@@ -91,7 +38,8 @@ const LessonList: React.FC = () => {
   const handleLessonClick = (lesson: Lesson) => {
     if (lesson.isUnlocked) {
       console.log(`Starting lesson: ${lesson.title}`);
-      // Navigate to lesson or start lesson logic here
+      // Use the actual lesson ID from API
+      navigate(`/lesson/${lesson.id}`);
     }
   };
 
@@ -100,18 +48,19 @@ const LessonList: React.FC = () => {
       <Typography variant="h4" gutterBottom sx={{ 
         fontWeight: 'bold', 
         color: '#1976d2',
-        fontSize: { xs: '1.75rem', sm: '2.125rem' },
-        textAlign: { xs: 'center', sm: 'left' },
-        px: { xs: 1, sm: 3 }
+        fontSize: { xs: '2rem', sm: '2.5rem' },
+        textAlign: 'center',
+        mb: 2
       }}>
         Your Learning Path
       </Typography>
       <Typography variant="subtitle1" gutterBottom sx={{ 
         color: 'text.secondary', 
-        mb: { xs: 2, sm: 3 },
-        textAlign: { xs: 'center', sm: 'left' },
-        px: { xs: 1, sm: 3 },
-        fontSize: { xs: '0.9rem', sm: '1rem' }
+        mb: { xs: 3, sm: 4 },
+        textAlign: 'center',
+        fontSize: { xs: '1rem', sm: '1.1rem' },
+        maxWidth: '600px',
+        mx: 'auto'
       }}>
         Complete lessons to unlock new challenges and track your progress
       </Typography>
@@ -121,23 +70,29 @@ const LessonList: React.FC = () => {
         gridTemplateColumns: { 
           xs: '1fr', 
           sm: 'repeat(2, 1fr)', 
-          lg: 'repeat(3, 1fr)' 
+          lg: 'repeat(3, 1fr)',
+          xl: 'repeat(4, 1fr)'
         }, 
-        gap: { xs: 2, sm: 3 },
-        px: { xs: 0, sm: 3 }
+        gap: { xs: 2, sm: 3, md: 4 },
+        maxWidth: '1600px',
+        mx: 'auto'
       }}>
-        {mockLessons.map((lesson) => (
+        {displayLessons.map((lesson) => (
           <Card
             key={lesson.id}
               sx={{
                 height: '100%',
                 cursor: lesson.isUnlocked ? 'pointer' : 'not-allowed',
                 opacity: lesson.isUnlocked ? 1 : 0.6,
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                borderRadius: 3,
                 '&:hover': lesson.isUnlocked ? {
-                  transform: { xs: 'none', sm: 'translateY(-4px)' },
-                  boxShadow: 4
-                } : {}
+                  transform: { xs: 'none', sm: 'translateY(-8px)' },
+                  boxShadow: 8
+                } : {},
+                background: lesson.isUnlocked 
+                  ? 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
+                  : 'linear-gradient(135deg, #f5f5f5 0%, #e9ecef 100%)'
               }}
               onClick={() => handleLessonClick(lesson)}
             >
@@ -199,7 +154,40 @@ const LessonList: React.FC = () => {
                     variant="outlined"
                     sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
                   />
+                  <Chip
+                    label={lesson.progress}
+                    size="small"
+                    color={lesson.progress === 'Completed' ? 'success' : lesson.progress === 'In Progress' ? 'warning' : 'default'}
+                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
+                  />
                 </Box>
+
+                {/* Score and Experience Display */}
+                {(lesson.score > 0 || lesson.expEarned > 0) && (
+                  <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    mb: { xs: 1, sm: 1.5 },
+                    p: 1,
+                    backgroundColor: 'rgba(25, 118, 210, 0.05)',
+                    borderRadius: 2
+                  }}>
+                    <Typography variant="body2" sx={{ 
+                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                      fontWeight: 'bold',
+                      color: 'primary.main'
+                    }}>
+                      Score: {lesson.score}%
+                    </Typography>
+                    <Typography variant="body2" sx={{ 
+                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                      fontWeight: 'bold',
+                      color: 'success.main'
+                    }}>
+                      +{lesson.expEarned} XP
+                    </Typography>
+                  </Box>
+                )}
 
                 <Box sx={{ mb: 1 }}>
                   <Typography variant="body2" color="text.secondary" sx={{
