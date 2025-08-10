@@ -15,6 +15,22 @@ A modern, engaging math learning app inspired by Duolingo. Built with React, Typ
 
 ## Getting Started
 
+### Environment Setup
+
+1. **Create environment file**: Copy the example environment file and configure it:
+```bash
+cp .env.example .env
+```
+
+2. **Configure API endpoint**: Edit `.env` file to set the API base URL:
+```env
+# For production deployment
+VITE_API_BASE_URL=https://math-learning-app-ui.vercel.app
+
+# For local development
+# VITE_API_BASE_URL=http://localhost:3000
+```
+
 ### Install dependencies
 ```
 npm install
@@ -56,7 +72,7 @@ The app now includes a comprehensive lesson interface accessible via:
 
 ### Backend API Integration
 
-The app integrates with a backend API at `http://localhost:3000/api` and now supports the new **GetLessons endpoint**:
+The app integrates with a backend API configured via environment variables (default: production API at `https://math-learning-app-ui.vercel.app/api`) and now supports the new **GetLessons endpoint**:
 
 **Primary Data Source:**
 - `GET /api/lessons` - Returns lesson data with scores, experience points, and progress tracking
